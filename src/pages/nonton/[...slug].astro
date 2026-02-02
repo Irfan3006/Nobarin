@@ -1,41 +1,31 @@
 ---
 import MainLayout from "../../layouts/MainLayout.astro";
-
+import { fetchWithCache } from "../../lib/movieCache"; // Cache
 
 const { slug } = Astro.params;
-
 
 let movie = null;
 let episodes = [];
 
 try {
   const targetUrl = `https://zeldvorik.ru/apiv3/api.php?action=detail&detailPath=${slug}`;
+  const data = await fetchWithCache(targetUrl, 60 * 60 * 1000);
 
-  const res = await fetch(targetUrl, {
-    method: "GET",
-    headers: {
-     
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36",
-    },
-  });
-
-  const data = await res.json();
-
-  if (data.success) {
+  if (data && data.success) {
     movie = data.data;
-
-   
     if (movie.seasons) {
       episodes = movie.seasons;
     } else {
       const raw = movie.episodes || movie.list_episode || movie.episode || [];
       episodes = Array.isArray(raw) ? raw : Object.values(raw);
     }
+  } else {
+    return Astro.redirect("/404");
   }
-} catch (e) {
-  console.error("Server Fetch Error:", e);
+} catch (e: unknown) {
+  console.error("Error Detail Page:", e instanceof Error ? e.message : String(e));
+  return Astro.redirect("/404");
 }
-
 
 if (!movie) {
   return Astro.redirect("/404");
@@ -81,7 +71,6 @@ if (!movie) {
           <div class="max-h-[400px] overflow-y-auto pr-2 custom-scrollbar p-1">
             {
               movie.seasons ? (
-               
                 movie.seasons.map((season: any) => (
                   <div class="mb-4">
                     <div class="sticky top-0 bg-dark/95 backdrop-blur z-10 py-2 mb-2 border-b border-white/5">
@@ -101,7 +90,6 @@ if (!movie) {
                   </div>
                 ))
               ) : (
-               
                 <div class="grid grid-cols-4 sm:grid-cols-6 md:grid-cols-8 gap-2">
                   {episodes.map((ep: any, idx: number) => (
                     <button
@@ -147,17 +135,14 @@ if (!movie) {
   </div>
 
   <script is:inline define:vars={{ slug }}>
-   
     const container = document.getElementById("playerContainer");
     const buttons = document.querySelectorAll(".ep-btn");
 
-   
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const url = btn.getAttribute("data-url");
         const epNum = btn.getAttribute("data-ep");
 
-       
         Swal.fire({
           toast: true,
           position: "top-end",
@@ -169,36 +154,29 @@ if (!movie) {
           timer: 1500,
         });
 
-       
         if (url.includes(".mp4") || url.includes("video-proxy.php")) {
-         
           container.innerHTML = `
                   <video id="videoPlayer" controls autoplay class="w-full h-full rounded-xl bg-black">
                       <source src="${url}" type="video/mp4">
                       Browser tidak mendukung video.
                   </video>`;
         } else {
-         
           container.innerHTML = `
                   <iframe id="videoPlayer" src="${url}" class="w-full h-full rounded-xl"
                       allowfullscreen frameborder="0" allow="autoplay; encrypted-media">
                   </iframe>`;
         }
 
-       
         container.scrollIntoView({ behavior: "smooth", block: "center" });
       });
     });
 
-   
-   
     var disqus_config = function () {
       this.page.url = window.location.href;
       this.page.identifier = slug;
     };
 
     (function () {
-     
       if (document.getElementById("disqus-script")) return;
 
       var d = document,
