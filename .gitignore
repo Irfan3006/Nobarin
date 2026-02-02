@@ -22,3 +22,9 @@ pnpm-debug.log*
 # jetbrains setting folder
 .idea/
 .vercel
+
+# 4. Editor Settings (User Specific)
+.vscode/
+.idea/
+*.swp
+*.swo
