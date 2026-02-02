@@ -23,7 +23,7 @@ pnpm-debug.log*
 .idea/
 .vercel
 
-# 4. Editor Settings (User Specific)
+# Editor Settings (User Specific)
 .vscode/
 .idea/
 *.swp
