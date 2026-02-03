@@ -232,35 +232,79 @@ try {
 
     function renderResumeSection() {
       const STORAGE_KEY = "nobar_history";
-      const history = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-      const historyArray = Object.values(history).sort((a, b) => b.timestamp - a.timestamp);
 
-      const container = document.getElementById("resumeSection");
-      const grid = document.getElementById("resumeGrid");
+      const rawData = localStorage.getItem(STORAGE_KEY);
 
-      if (historyArray.length === 0) {
-        container.classList.add("hidden");
+      if (!rawData) {
+        document.getElementById("resumeSection").classList.add("hidden");
         return;
       }
 
-      container.classList.remove("hidden");
-      grid.innerHTML = historyArray
-        .slice(0, 4)
-        .map(
-          (item) => `
-          <a href="/nonton/${item.detailPath}" class="relative group cursor-pointer overflow-hidden rounded-xl glass border border-white/5 block">
-              <div class="aspect-video">
-                  <img src="${item.poster}" class="w-full h-full object-cover opacity-60 group-hover:opacity-100 transition duration-500">
-              </div>
-              <div class="absolute bottom-0 p-3 w-full bg-gradient-to-t from-dark to-transparent">
-                  <p class="text-[10px] text-purple-400 font-bold uppercase">${item.type === "tv" ? "Series" : "Movie"}</p>
-                  <h3 class="text-xs font-bold text-white truncate">${item.title}</h3>
-                  ${item.type === "tv" ? `<p class="text-[10px] text-purple-200">Ep ${item.lastEpisode}</p>` : ""}
-              </div>
-          </a>
-        `,
-        )
-        .join("");
+      try {
+        const history = JSON.parse(rawData);
+
+        const historyArray = Object.values(history);
+
+        if (historyArray.length === 0) {
+          document.getElementById("resumeSection").classList.add("hidden");
+          return;
+        }
+
+        historyArray.sort((a, b) => b.timestamp - a.timestamp);
+
+        const container = document.getElementById("resumeSection");
+        const grid = document.getElementById("resumeGrid");
+
+        container.classList.remove("hidden");
+
+        grid.innerHTML = historyArray
+          .slice(0, 4)
+          .map(
+            (item) => `
+              <a href="/nonton/${item.detailPath}" class="relative group cursor-pointer overflow-hidden rounded-xl glass border border-white/5 block hover:border-purple-500/50 transition-all">
+                  <div class="aspect-video relative">
+                      <img src="${item.poster}" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500">
+                      
+                      <div class="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition duration-300">
+                          <div class="bg-purple-600/90 p-2 rounded-full shadow-lg backdrop-blur-sm">
+                             <svg class="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"></path></svg>
+                          </div>
+                      </div>
+                      
+                      <div class="absolute bottom-0 left-0 w-full h-1 bg-white/20">
+                          <div class="h-full bg-purple-500" style="width: ${Math.random() * 40 + 20}%"></div>
+                      </div>
+                  </div>
+                  
+                  <div class="absolute bottom-0 p-3 w-full bg-gradient-to-t from-dark via-dark/80 to-transparent">
+                      <div class="flex justify-between items-end">
+                          <div class="overflow-hidden">
+                              <p class="text-[10px] text-purple-400 font-bold uppercase tracking-wider mb-0.5">
+                                  ${item.type === "tv" ? "Lanjut Nonton" : "Movie"}
+                              </p>
+                              <h3 class="text-xs font-bold text-white truncate w-full">${item.title}</h3>
+                          </div>
+                          
+                          ${
+                            item.type === "tv"
+                              ? `
+                              <div class="shrink-0 ml-2">
+                                  <span class="bg-purple-600 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-md">
+                                      Ep ${item.lastEpisode}
+                                  </span>
+                              </div>
+                          `
+                              : ""
+                          }
+                      </div>
+                  </div>
+              </a>
+            `,
+          )
+          .join("");
+      } catch (error) {
+        console.error("Error parsing history:", error);
+      }
     }
   </script>
 </MainLayout>

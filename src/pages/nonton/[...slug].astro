@@ -134,57 +134,77 @@ if (!movie) {
     </div>
   </div>
 
-  <script is:inline define:vars={{ slug }}>
-    const container = document.getElementById("playerContainer");
-    const buttons = document.querySelectorAll(".ep-btn");
+<script is:inline define:vars={{ movie, slug }}>
+    const STORAGE_KEY = "nobar_history";
+   
+    function saveHistory(episodeNumber) {
+        try {
+            let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+            history[slug] = {
+                title: movie.title,
+                poster: movie.poster,
+                detailPath: slug,
+                lastEpisode: parseInt(episodeNumber),
+                type: movie.type,
+                timestamp: Date.now()
+            };
+           
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+            console.log("History updated:", history[slug]);
+        } catch (e) {
+            console.error("Gagal simpan history:", e);
+        }
+    }
 
-    buttons.forEach((btn) => {
-      btn.addEventListener("click", () => {
-        const url = btn.getAttribute("data-url");
-        const epNum = btn.getAttribute("data-ep");
+    const container = document.getElementById('playerContainer');
+    const buttons = document.querySelectorAll('.ep-btn');
+    const currentHistory = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+    const existingData = currentHistory[slug];
 
-        Swal.fire({
-          toast: true,
-          position: "top-end",
-          icon: "info",
-          title: `Memutar Episode ${epNum}...`,
-          showConfirmButton: false,
-          background: "#1e1b4b",
-          color: "#fff",
-          timer: 1500,
-        });
+    if (existingData) {     
+        saveHistory(existingData.lastEpisode);
+        
+    } else {
+        saveHistory(1);
+    }
 
-        if (url.includes(".mp4") || url.includes("video-proxy.php")) {
-          container.innerHTML = `
+    buttons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const url = btn.getAttribute('data-url');
+            const epNum = btn.getAttribute('data-ep');
+  
+            saveHistory(epNum);
+
+            Swal.fire({
+                toast: true, position: 'top-end', icon: 'info',
+                title: `Memutar Episode ${epNum}...`,
+                showConfirmButton: false, timer: 1500,
+                background: '#1e1b4b', color: '#fff'
+            });
+
+            if (url.includes(".mp4") || url.includes("video-proxy.php")) {
+                container.innerHTML = `
                   <video id="videoPlayer" controls autoplay class="w-full h-full rounded-xl bg-black">
                       <source src="${url}" type="video/mp4">
-                      Browser tidak mendukung video.
                   </video>`;
-        } else {
-          container.innerHTML = `
+            } else {
+                container.innerHTML = `
                   <iframe id="videoPlayer" src="${url}" class="w-full h-full rounded-xl"
                       allowfullscreen frameborder="0" allow="autoplay; encrypted-media">
                   </iframe>`;
-        }
-
-        container.scrollIntoView({ behavior: "smooth", block: "center" });
-      });
+            }
+            container.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        });
     });
 
-    var disqus_config = function () {
-      this.page.url = window.location.href;
-      this.page.identifier = slug;
-    };
-
-    (function () {
-      if (document.getElementById("disqus-script")) return;
-
-      var d = document,
-        s = d.createElement("script");
-      s.src = "https://nobarin-1.disqus.com/embed.js";
-      s.id = "disqus-script";
-      s.setAttribute("data-timestamp", +new Date());
-      (d.head || d.body).appendChild(s);
+    var disqus_config = function () { this.page.url = window.location.href; this.page.identifier = slug; };
+    (function() { 
+        if (document.getElementById('disqus-script')) return;
+        var d = document, s = d.createElement('script');
+        s.src = 'https://nobarin-1.disqus.com/embed.js';
+        s.id = 'disqus-script';
+        s.setAttribute('data-timestamp', +new Date());
+        (d.head || d.body).appendChild(s);
     })();
-  </script>
+</script>
 </MainLayout>
