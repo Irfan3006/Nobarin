@@ -1,5 +1,5 @@
 ---
-const { title, description } = Astro.props;
+const { title, description, schema = null } = Astro.props;
 ---
 
 <!doctype html>
@@ -26,6 +26,9 @@ const { title, description } = Astro.props;
     <meta name="description" content={description || "Nobarin adalah platform streaming gratis untuk menonton film dan series terlengkap."} />
     <meta name="google-site-verification" content="29CnmVlPwO8uPHulbQR6KYzol5wqfKfgDzUtH2isZPk" />
     <meta name="google-adsense-account" content="ca-pub-6092608473153556" />
+
+    <!-- Json Schema SEO -->
+    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
 
     <!-- Card -->
     <meta property="og:type" content="website" />
