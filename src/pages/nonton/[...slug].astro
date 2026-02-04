@@ -43,15 +43,22 @@ function truncateWords(text: string, limit = 155) {
   schema={{
     "@context": "https://schema.org",
     "@type": "Movie",
+    "@id": `https://nobarin-one.vercel.app/nonton/${slug}#movie`,
+    url: `https://nobarin-one.vercel.app/nonton/${slug}`,
     name: movie.title,
-    image: movie.poster,
-    datePublished: movie.year,
     description: movie.description,
-    aggregateRating: movie.rating && {
-      "@type": "AggregateRating",
-      ratingValue: movie.rating,
-      ratingCount: "1000",
-    },
+    datePublished: `${movie.year}-01-01`,
+    image: [movie.poster],
+
+    ...(movie.rating && {
+      aggregateRating: {
+        "@type": "AggregateRating",
+        ratingValue: Number(movie.rating),
+        ratingCount: 1000,
+        bestRating: 10,
+        worstRating: 1,
+      },
+    }),
   }}
 >
   <div class="container mx-auto px-4 py-24 min-h-screen">
