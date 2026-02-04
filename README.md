@@ -39,6 +39,11 @@ Project ini mengimplementasikan beberapa lapisan keamanan pada level HTTP Header
 - `Strict-Transport-Security`: Memaksa koneksi HTTPS yang aman.
 
 ---
+## 🌐 Demo
+- Link Utama : https://nobarin-one.vercel.app/
+- Link Alternatif : https://nobarin.netlify.app/
+---
+
 
 ## 📜 Disclaimer
 Nobarin adalah proyek edukasi untuk tujuan pembelajaran pengembangan web. Kami tidak menyimpan atau meng-host file video apapun di server kami. Semua konten bersumber dari API pihak ketiga. Silakan baca file [dmca](https://nobarin-one.vercel.app/dmca.html) untuk informasi lebih lanjut.
