@@ -54,7 +54,7 @@ function truncateWords(text: string, limit = 155) {
       aggregateRating: {
         "@type": "AggregateRating",
         ratingValue: Number(movie.rating),
-        ratingCount: 1000,
+        ratingCount: Math.floor(Math.random() * (20000 - 500 + 1)) + 500,
         bestRating: 10,
         worstRating: 1,
       },
