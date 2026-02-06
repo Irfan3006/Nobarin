@@ -166,45 +166,105 @@ function truncateWords(text: string, limit = 155) {
     </div>
   </div>
 
-  <script is:inline define:vars={{ movie, slug }}>
+ <script is:inline define:vars={{ movie, slug }}>
     const STORAGE_KEY = "nobar_history";
 
-    function saveHistory(episodeNumber) {
+    function markButtonAsWatched(btn) {
+      if (!btn.classList.contains("watched-episode")) {
+        btn.classList.add("watched-episode", "bg-purple-900/40", "border-purple-500/50");
+        btn.classList.remove("bg-white/5", "border-white/5");
+        
+        const span = btn.querySelector("span");
+        if (span) span.classList.add("text-purple-300");
+      }
+    }
+
+    function saveProgress(episodeNumber) {
       try {
         let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+        const epInt = parseInt(episodeNumber);
+        
+        let currentData = history[slug] || {};
+        let watchedList = currentData.watchedEpisodes || [];
+
+        if (!watchedList.includes(epInt)) {
+            watchedList.push(epInt);
+        }
+
         history[slug] = {
           title: movie.title,
           poster: movie.poster,
           detailPath: slug,
-          lastEpisode: parseInt(episodeNumber),
+          lastEpisode: epInt, 
+          watchedEpisodes: watchedList,
           type: movie.type,
           timestamp: Date.now(),
         };
 
         localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
-        console.log("History updated:", history[slug]);
+        
+        const currentBtn = document.querySelector(`.ep-btn[data-ep="${episodeNumber}"]`);
+        if (currentBtn) markButtonAsWatched(currentBtn);
+
       } catch (e) {
-        console.error("Gagal simpan history:", e);
+        console.error("Gagal update progress:", e);
       }
+    }
+
+    function initPageVisit() {
+        try {
+            let history = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
+            let data = history[slug];
+
+            if (data) {
+                data.timestamp = Date.now();
+                
+                if (!data.watchedEpisodes) {
+                    data.watchedEpisodes = data.lastEpisode ? [data.lastEpisode] : [];
+                }
+            } else {
+                data = {
+                    title: movie.title,
+                    poster: movie.poster,
+                    detailPath: slug,
+                    lastEpisode: 1, 
+                    watchedEpisodes: [], 
+                    type: movie.type,
+                    timestamp: Date.now(),
+                };
+            }
+
+            history[slug] = data;
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(history));
+            
+            return data;
+        } catch (e) {
+            console.error("Gagal init page visit:", e);
+            return null;
+        }
+    }
+    
+    const currentData = initPageVisit();
+
+    if (currentData && currentData.watchedEpisodes) {
+        const buttons = document.querySelectorAll(".ep-btn");
+        buttons.forEach(btn => {
+            const epNum = parseInt(btn.getAttribute("data-ep"));
+            if (currentData.watchedEpisodes.includes(epNum)) {
+                markButtonAsWatched(btn);
+            }
+        });
     }
 
     const container = document.getElementById("playerContainer");
     const buttons = document.querySelectorAll(".ep-btn");
-    const currentHistory = JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}");
-    const existingData = currentHistory[slug];
-
-    if (existingData) {
-      saveHistory(existingData.lastEpisode);
-    } else {
-      saveHistory(1);
-    }
 
     buttons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const url = btn.getAttribute("data-url");
         const epNum = btn.getAttribute("data-ep");
 
-        saveHistory(epNum);
+        saveProgress(epNum);
 
         Swal.fire({
           toast: true,
