@@ -1,7 +1,6 @@
 ---
 // src/pages/index.astro
 import MainLayout from "../layouts/MainLayout.astro";
-
 ---
 
 <MainLayout title="Nobarin - Nonton Bareng Film & Series Terlengkap">
@@ -17,21 +16,28 @@ import MainLayout from "../layouts/MainLayout.astro";
     <div class="relative mb-8">
       <div class="absolute inset-0 bg-purple-600 blur-3xl opacity-20 rounded-full animate-pulse"></div>
       <svg xmlns="http://www.w3.org/2000/svg" class="h-24 w-24 text-purple-500 relative z-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="1.5"
+          d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"
+        ></path>
       </svg>
     </div>
-    
-    <h1 class="text-3xl md:text-5xl font-black text-white mb-4">Waduh, Gagal Memuat Data</h1>
-    <p class="text-gray-400 max-w-md mb-8 leading-relaxed">
-      Sepertinya ada masalah koneksi ke server film kami. Coba refresh halaman ya.
-    </p>
 
-    <button 
-      onclick="window.location.reload()" 
+    <h1 class="text-3xl md:text-5xl font-black text-white mb-4">Waduh, Gagal Memuat Data</h1>
+    <p class="text-gray-400 max-w-md mb-8 leading-relaxed">Sepertinya ada masalah koneksi ke server film kami. Coba refresh halaman ya.</p>
+
+    <button
+      onclick="window.location.reload()"
       class="px-8 py-3 bg-purple-600 hover:bg-purple-700 text-white rounded-full font-bold flex items-center gap-2 transition-all active:scale-95 shadow-lg shadow-purple-600/30 group cursor-pointer"
     >
       <svg class="w-5 h-5 group-hover:rotate-180 transition-transform duration-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
+        <path
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          stroke-width="2"
+          d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path>
       </svg>
       <span>Coba Lagi</span>
     </button>
@@ -40,22 +46,36 @@ import MainLayout from "../layouts/MainLayout.astro";
   <div id="mainContent" class="hidden opacity-0 transition-opacity duration-700">
     <section class="relative h-[80vh] w-full pt-20" id="heroSection">
       <div class="swiper heroSwiper h-full">
-        <div class="swiper-wrapper" id="heroWrapper">
-          </div>
-        <div class="swiper-button-prev-custom absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 cursor-pointer p-3 rounded-full glass hover:bg-purple-600/50 transition-all duration-300 text-white group">
-          <svg class="w-6 h-6 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg>
+        <div class="swiper-wrapper" id="heroWrapper"></div>
+        <div
+          class="swiper-button-prev-custom absolute left-4 md:left-10 top-1/2 -translate-y-1/2 z-30 cursor-pointer p-3 rounded-full glass hover:bg-purple-600/50 transition-all duration-300 text-white group"
+        >
+          <svg class="w-6 h-6 transform group-hover:-translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"></path></svg
+          >
         </div>
-        <div class="swiper-button-next-custom absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 cursor-pointer p-3 rounded-full glass hover:bg-purple-600/50 transition-all duration-300 text-white group">
-          <svg class="w-6 h-6 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+        <div
+          class="swiper-button-next-custom absolute right-4 md:right-10 top-1/2 -translate-y-1/2 z-30 cursor-pointer p-3 rounded-full glass hover:bg-purple-600/50 transition-all duration-300 text-white group"
+        >
+          <svg class="w-6 h-6 transform group-hover:translate-x-1 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+            ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg
+          >
         </div>
         <div class="swiper-pagination"></div>
       </div>
     </section>
 
     <section class="px-6 md:px-12 py-8 overflow-x-auto whitespace-nowrap scrollbar-hide flex space-x-4 no-scrollbar">
-      <button onclick="changeCategory('trending', this)" class="cat-btn active px-6 py-2 rounded-full glass hover:bg-purple-600 transition bg-purple-600">Trending</button>
-      <button onclick="changeCategory('indonesian-movies', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition">Indo Movie</button>
-      <button onclick="changeCategory('indonesian-drama', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition">Indo Drama</button>
+      <button
+        onclick="changeCategory('trending', this)"
+        class="cat-btn active px-6 py-2 rounded-full glass hover:bg-purple-600 transition bg-purple-600">Trending</button
+      >
+      <button onclick="changeCategory('indonesian-movies', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition"
+        >Indo Movie</button
+      >
+      <button onclick="changeCategory('indonesian-drama', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition"
+        >Indo Drama</button
+      >
       <button onclick="changeCategory('kdrama', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition">K-Drama</button>
       <button onclick="changeCategory('anime', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition">Anime</button>
       <button onclick="changeCategory('short-tv', this)" class="cat-btn px-6 py-2 rounded-full glass hover:bg-purple-600 transition">Short TV</button>
@@ -66,8 +86,7 @@ import MainLayout from "../layouts/MainLayout.astro";
         <span class="w-2 h-8 bg-purple-600 rounded-full mr-3"></span> Populer Sekarang
       </h2>
 
-      <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
-        </div>
+      <div id="movieGrid" class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8"></div>
 
       <div class="mt-12 flex justify-center space-x-4" id="pagination">
         <button id="prevBtn" onclick="changePage(-1)" class="px-6 py-2 glass rounded-lg opacity-50 cursor-not-allowed">Previous</button>
@@ -91,7 +110,6 @@ import MainLayout from "../layouts/MainLayout.astro";
     let currentCategory = "trending";
     let currentPage = 1;
 
-   
     document.addEventListener("DOMContentLoaded", function () {
       renderResumeSection();
       initializePageData();
@@ -99,31 +117,42 @@ import MainLayout from "../layouts/MainLayout.astro";
 
     async function initializePageData() {
       try {
-       
-        const response = await fetch('/api/initial-home');
+        const response = await fetch("/api/initial-home");
         const data = await response.json();
 
         if (data && data.success) {
-            const heroMovies = data.items.slice(0, 5);
-            const initialGrid = data.items;
+          const heroMovies = data.items.slice(0, 5);
+          const initialGrid = data.items;
 
-           
-            renderHeroSection(heroMovies);
-            renderGrid(initialGrid);
+          renderHeroSection(heroMovies);
+          renderGrid(initialGrid);
+          
+          const homepageSchema = {
+            "@context": "https://schema.org",
+            "@type": "CollectionPage",
+            name: "Nobarin - Nonton Bareng Film & Series Terlengkap",
+            mainEntity: heroMovies.map((m) => ({
+              "@type": "Movie",
+              name: m.title || undefined,
+              url: m.detailPath ? `${location.origin}/nonton/${m.detailPath}` : undefined,
+              image: m.poster || undefined,
+              datePublished: m.year ? String(m.year) : undefined,
+              description: m.description || undefined,
+            })),
+          };
 
-           
-            document.getElementById("loadingState").classList.add("hidden");
-            const mainContent = document.getElementById("mainContent");
-            mainContent.classList.remove("hidden");
-           
-            setTimeout(() => {
-                mainContent.classList.remove("opacity-0");
-            }, 50);
+          injectJsonLd(homepageSchema);
+          document.getElementById("loadingState").classList.add("hidden");
+          const mainContent = document.getElementById("mainContent");
+          mainContent.classList.remove("hidden");
 
-           
-            initHeroSwiper();
+          setTimeout(() => {
+            mainContent.classList.remove("opacity-0");
+          }, 50);
+
+          initHeroSwiper();
         } else {
-            throw new Error("Data success false");
+          throw new Error("Data success false");
         }
       } catch (error) {
         console.error("Gagal memuat data awal:", error);
@@ -134,22 +163,49 @@ import MainLayout from "../layouts/MainLayout.astro";
     }
 
     function initHeroSwiper() {
-        new Swiper(".heroSwiper", {
-            loop: true,
-            effect: "fade",
-            fadeEffect: { crossFade: true },
-            speed: 1000,
-            autoplay: { delay: 5000, disableOnInteraction: false },
-            pagination: { el: ".swiper-pagination", clickable: true },
-            navigation: { nextEl: ".swiper-button-next-custom", prevEl: ".swiper-button-prev-custom" },
-        });
+      new Swiper(".heroSwiper", {
+        loop: true,
+        effect: "fade",
+        fadeEffect: { crossFade: true },
+        speed: 1000,
+        autoplay: { delay: 5000, disableOnInteraction: false },
+        pagination: { el: ".swiper-pagination", clickable: true },
+        navigation: { nextEl: ".swiper-button-next-custom", prevEl: ".swiper-button-prev-custom" },
+      });
     }
 
-   
+    function cleanObject(obj) {
+      if (obj == null) return undefined;
+      if (Array.isArray(obj)) {
+        const arr = obj.map(cleanObject).filter((v) => v !== undefined && v !== null);
+        return arr.length ? arr : undefined;
+      }
+      if (typeof obj === "object") {
+        const entries = Object.entries(obj).map(([k, v]) => [k, cleanObject(v)]);
+        const filtered = entries.filter(([_, v]) => v !== undefined && v !== null);
+        if (!filtered.length) return undefined;
+        return Object.fromEntries(filtered);
+      }
+      return obj; 
+    }
+
+    function injectJsonLd(schema) {
+      if (!schema || typeof schema !== "object") return;
+      if (!schema["@type"] || schema["@type"] === null) return; 
+      const clean = cleanObject(schema);
+      if (!clean) return;
+      if (!clean["@type"]) return;
+      const script = document.createElement("script");
+      script.type = "application/ld+json";
+      script.textContent = JSON.stringify(clean);
+      document.head.appendChild(script);
+    }
 
     function renderHeroSection(items) {
-        const wrapper = document.getElementById("heroWrapper");
-        wrapper.innerHTML = items.map(item => `
+      const wrapper = document.getElementById("heroWrapper");
+      wrapper.innerHTML = items
+        .map(
+          (item) => `
             <div class="swiper-slide relative bg-dark overflow-hidden h-full">
                 <div class="absolute inset-0 z-0">
                     <img src="${item.poster}" class="w-full h-full object-cover scale-110 blur-xl opacity-20" loading="eager" />
@@ -175,10 +231,10 @@ import MainLayout from "../layouts/MainLayout.astro";
                     </div>
                 </div>
             </div>
-        `).join("");
+        `,
+        )
+        .join("");
     }
-
-   
 
     async function changeCategory(cat, btn) {
       currentCategory = cat;
@@ -226,7 +282,9 @@ import MainLayout from "../layouts/MainLayout.astro";
 
     function renderGrid(items) {
       const grid = document.getElementById("movieGrid");
-      grid.innerHTML = items.map((item) => `
+      grid.innerHTML = items
+        .map(
+          (item) => `
           <a href="/nonton/${item.detailPath}" class="group relative bg-white/5 rounded-xl overflow-hidden cursor-pointer movie-card shadow-xl block" data-aos="fade-up">
               <div class="aspect-[2/3] overflow-hidden">
                   <img src="${item.poster}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-110 transition duration-500">
@@ -241,7 +299,9 @@ import MainLayout from "../layouts/MainLayout.astro";
                   <p class="text-xs text-gray-400 capitalize">${item.type}</p>
               </div>
           </a>
-      `).join("");
+      `,
+        )
+        .join("");
     }
 
     function renderResumeSection() {
@@ -262,7 +322,10 @@ import MainLayout from "../layouts/MainLayout.astro";
         const container = document.getElementById("resumeSection");
         const grid = document.getElementById("resumeGrid");
         container.classList.remove("hidden");
-        grid.innerHTML = historyArray.slice(0, 4).map((item) => `
+        grid.innerHTML = historyArray
+          .slice(0, 4)
+          .map(
+            (item) => `
             <a href="/nonton/${item.detailPath}" class="relative group cursor-pointer overflow-hidden rounded-xl glass border border-white/5 block hover:border-purple-500/50 transition-all">
                 <div class="aspect-video relative">
                     <img src="${item.poster}" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 transition duration-500">
@@ -285,7 +348,9 @@ import MainLayout from "../layouts/MainLayout.astro";
                     </div>
                 </div>
             </a>
-        `).join("");
+        `,
+          )
+          .join("");
       } catch (error) {
         console.error("Error parsing history:", error);
       }

@@ -73,57 +73,172 @@ const { title, description, schema = null } = Astro.props;
   <body class="overflow-x-hidden">
     <nav class="fixed top-0 w-full z-50 glass transition-all duration-300 py-3 px-4 md:px-12 flex justify-between items-center">
       <a href="/" class="text-xl md:text-2xl font-black bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent"> Nobarin </a>
-      <div class="relative flex-1 max-w-[180px] md:max-w-md ml-4">
-        <svg class="w-4 h-4 absolute left-3 top-2.5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="relative flex-1 max-w-[180px] md:max-w-md ml-4" id="searchContainer">
+        <svg class="w-4 h-4 absolute left-3 top-2.5 text-purple-400 z-10" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
         </svg>
+
         <input
           type="text"
           id="searchInput"
+          autocomplete="off"
           placeholder="Cari film..."
-          class="w-full bg-white/10 border border-white/20 rounded-full py-1.5 px-4 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all"
+          class="w-full bg-white/5 border border-purple-500/30 rounded-full py-1.5 px-4 pl-9 text-sm focus:outline-none focus:ring-2 focus:ring-purple-500 transition-all text-white placeholder-gray-400"
         />
+
+        <div
+          id="historyDropdown"
+          class="absolute top-full left-0 w-full mt-2 bg-dark/95 backdrop-blur-xl rounded-xl border border-purple-500/30 shadow-[0_0_15px_rgba(139,92,246,0.15)] overflow-hidden hidden transform transition-all duration-200 origin-top z-50"
+        >
+          <div class="px-4 py-2 text-xs text-purple-300 font-bold tracking-wider border-b border-purple-500/20 flex justify-between items-center">
+            <span>RIWAYAT</span>
+            <button id="clearAllHistory" class="text-red-400 hover:text-red-300 transition-colors hover:underline">Hapus</button>
+          </div>
+
+          <ul id="historyList" class="max-h-60 overflow-y-auto custom-scrollbar"></ul>
+        </div>
       </div>
     </nav>
+  </body>
 
-    <slot />
+  <slot />
 
-    <footer class="bg-dark/80 border-t border-white/10 pt-16 pb-8 px-6 md:px-12 mt-20">
-      <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
-        <div class="col-span-1 md:col-span-2">
-          <a href="#" class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-6 block"> Nobarin </a>
-          <p class="text-gray-400 max-w-sm leading-relaxed">
-            Nobarin adalah platform kurasi konten film dan series populer. Kami tidak menyimpan file di server sendiri, melainkan menyajikan konten
-            dari penyedia pihak ketiga.
-          </p>
-        </div>
-        <div>
-          <h4 class="text-white font-bold mb-6">Navigasi</h4>
-          <ul class="space-y-4 text-gray-400">
-            <li><a href="#" class="hover:text-purple-500 transition">Beranda</a></li>
-            <li><a href="#" class="hover:text-purple-500 transition">Trending</a></li>
-            <li><a href="#" class="hover:text-purple-500 transition">Series Terbaru</a></li>
-          </ul>
-        </div>
-        <div>
-          <h4 class="text-white font-bold mb-6">Legalitas</h4>
-          <ul class="space-y-4 text-gray-400">
-            <li><a href="/dmca" class="hover:text-purple-500 transition">DMCA Disclaimer</a></li>
-            <li><a href="/privacy" class="hover:text-purple-500 transition">Privacy Policy</a></li>
-            <li><a href="/terms" class="hover:text-purple-500 transition">Terms of Service</a></li>
-          </ul>
-        </div>
+  <footer class="bg-dark/80 border-t border-white/10 pt-16 pb-8 px-6 md:px-12 mt-20">
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-12">
+      <div class="col-span-1 md:col-span-2">
+        <a href="#" class="text-3xl font-bold bg-gradient-to-r from-purple-400 to-pink-500 bg-clip-text text-transparent mb-6 block"> Nobarin </a>
+        <p class="text-gray-400 max-w-sm leading-relaxed">
+          Nobarin adalah platform kurasi konten film dan series populer. Kami tidak menyimpan file di server sendiri, melainkan menyajikan konten dari
+          penyedia pihak ketiga.
+        </p>
       </div>
-      <div class="border-t border-white/5 pt-8 flex flex-col md:row justify-between items-center text-gray-500 text-sm">
-        <p>&copy; 2026 Nobarin. Created with 💻 by ████ ██████.</p>
+      <div>
+        <h4 class="text-white font-bold mb-6">Navigasi</h4>
+        <ul class="space-y-4 text-gray-400">
+          <li><a href="#" class="hover:text-purple-500 transition">Beranda</a></li>
+          <li><a href="#" class="hover:text-purple-500 transition">Trending</a></li>
+          <li><a href="#" class="hover:text-purple-500 transition">Series Terbaru</a></li>
+        </ul>
       </div>
-    </footer>
+      <div>
+        <h4 class="text-white font-bold mb-6">Legalitas</h4>
+        <ul class="space-y-4 text-gray-400">
+          <li><a href="/dmca" class="hover:text-purple-500 transition">DMCA Disclaimer</a></li>
+          <li><a href="/privacy" class="hover:text-purple-500 transition">Privacy Policy</a></li>
+          <li><a href="/terms" class="hover:text-purple-500 transition">Terms of Service</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/5 pt-8 flex flex-col md:row justify-between items-center text-gray-500 text-sm">
+      <p>&copy; 2026 Nobarin. Created with 💻 by ████ ██████.</p>
+    </div>
+  </footer>
 
-    <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
-    <script is:inline src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
-    <script is:inline>
-      AOS.init({ once: true, duration: 800 });
+  <script is:inline src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+  <script is:inline src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
+  <script is:inline>
+    AOS.init({ once: true, duration: 800 });
 
+    const searchInput = document.getElementById("searchInput");
+
+    const handleSearch = (e) => {
+      if (e.key === "Enter") {
+        const query = e.target.value.trim();
+        if (query.length > 0) {
+          window.location.href = `/search?q=${encodeURIComponent(query)}`;
+        }
+      }
+    };
+
+    if (searchInput) {
+      searchInput.addEventListener("keydown", handleSearch);
+    }
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const searchInput = document.getElementById("searchInput");
+      const historyDropdown = document.getElementById("historyDropdown");
+      const historyList = document.getElementById("historyList");
+      const clearAllBtn = document.getElementById("clearAllHistory");
+      const searchContainer = document.getElementById("searchContainer");
+
+      let searchHistory = JSON.parse(localStorage.getItem("nobarin_search_history")) || [];
+
+      function renderHistory() {
+        historyList.innerHTML = "";
+        searchHistory.forEach((item, index) => {
+          const li = document.createElement("li");
+
+          li.className =
+            "flex justify-between items-center px-4 py-3 hover:bg-purple-600/20 border-b border-white/5 last:border-0 cursor-pointer group transition-colors duration-200";
+
+          li.innerHTML = `
+        <div class="flex items-center text-gray-300 flex-1" onclick="selectHistory('${item}')">
+            <svg class="w-4 h-4 mr-3 text-purple-500 opacity-70 group-hover:opacity-100 transition-opacity" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            
+            <span class="text-sm font-medium text-gray-400 group-hover:text-white transition-colors">${item}</span>
+        </div>
+        
+        <button onclick="deleteHistoryItem(${index}, event)" class="text-gray-600 hover:text-red-400 p-1 rounded-full hover:bg-white/10 transition-all opacity-0 group-hover:opacity-100">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"></path></svg>
+        </button>
+    `;
+          historyList.appendChild(li);
+        });
+        if (searchHistory.length === 0) {
+          historyDropdown.classList.add("hidden");
+          return;
+        }
+      }
+
+      function performSearch(query) {
+        if (!query.trim()) return;
+
+        searchHistory = searchHistory.filter((item) => item.toLowerCase() !== query.toLowerCase());
+        searchHistory.unshift(query);
+
+        if (searchHistory.length > 10) searchHistory.pop();
+
+        localStorage.setItem("nobarin_search_history", JSON.stringify(searchHistory));
+
+        window.location.href = `/search?q=${encodeURIComponent(query)}`;
+      }
+
+      window.selectHistory = (query) => {
+        performSearch(query);
+      };
+
+      window.deleteHistoryItem = (index, event) => {
+        event.stopPropagation();
+        searchHistory.splice(index, 1);
+        localStorage.setItem("nobarin_search_history", JSON.stringify(searchHistory));
+        renderHistory();
+        searchInput.focus();
+      };
+
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          performSearch(searchInput.value);
+        }
+      });
+
+      searchInput.addEventListener("focus", () => {
+        renderHistory();
+        if (searchHistory.length > 0) {
+          historyDropdown.classList.remove("hidden");
+        }
+      });
+
+      document.addEventListener("click", (e) => {
+        if (!searchContainer.contains(e.target)) {
+          historyDropdown.classList.add("hidden");
+        }
+      });
+
+      clearAllBtn.addEventListener("click", () => {
+        searchHistory = [];
+        localStorage.removeItem("nobarin_search_history");
+        renderHistory();
+      });
       window.addEventListener("scroll", () => {
         const nav = document.querySelector("nav");
         if (window.scrollY > 50) {
@@ -133,21 +248,6 @@ const { title, description, schema = null } = Astro.props;
           nav.classList.add("py-4");
         }
       });
-
-      const searchInput = document.getElementById("searchInput");
-
-      const handleSearch = (e) => {
-        if (e.key === "Enter") {
-          const query = e.target.value.trim();
-          if (query.length > 0) {
-            window.location.href = `/search?q=${encodeURIComponent(query)}`;
-          }
-        }
-      };
-
-      if (searchInput) {
-        searchInput.addEventListener("keydown", handleSearch);
-      }
-    </script>
-  </body>
+    });
+  </script>
 </html>
