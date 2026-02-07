@@ -126,22 +126,29 @@ import MainLayout from "../layouts/MainLayout.astro";
 
           renderHeroSection(heroMovies);
           renderGrid(initialGrid);
-          
-          const homepageSchema = {
-            "@context": "https://schema.org",
-            "@type": "CollectionPage",
-            name: "Nobarin - Nonton Bareng Film & Series Terlengkap",
-            mainEntity: heroMovies.map((m) => ({
-              "@type": "Movie",
-              name: m.title || undefined,
-              url: m.detailPath ? `${location.origin}/nonton/${m.detailPath}` : undefined,
-              image: m.poster || undefined,
-              datePublished: m.year ? String(m.year) : undefined,
-              description: m.description || undefined,
-            })),
-          };
 
-          injectJsonLd(homepageSchema);
+          if (heroMovies && heroMovies.length > 0) {
+            const homepageSchema = {
+              "@context": "https://schema.org",
+              "@type": "CollectionPage",
+              name: "Nobarin - Nonton Bareng Film & Series Terlengkap",
+              description: "Nonton film dan series subtitle Indonesia terlengkap dan terupdate.",
+              url: window.location.href,
+              mainEntity: heroMovies
+                .map((m) => ({
+                  "@type": "Movie",
+                  name: m.title,
+                  url: m.detailPath ? `${window.location.origin}/nonton/${m.detailPath}` : undefined,
+                  image: m.poster,
+                  datePublished: m.year ? String(m.year) : undefined,
+                  description: m.description ? m.description.substring(0, 150) + "..." : undefined, // Batasi panjang deskripsi
+                }))
+                .filter((m) => m.name && m.url),
+            };
+
+            injectJsonLd(homepageSchema);
+          }
+
           document.getElementById("loadingState").classList.add("hidden");
           const mainContent = document.getElementById("mainContent");
           mainContent.classList.remove("hidden");
@@ -175,27 +182,36 @@ import MainLayout from "../layouts/MainLayout.astro";
     }
 
     function cleanObject(obj) {
-      if (obj == null) return undefined;
+      if (obj === null || obj === undefined || obj === "") return undefined;
+
       if (Array.isArray(obj)) {
         const arr = obj.map(cleanObject).filter((v) => v !== undefined && v !== null);
-        return arr.length ? arr : undefined;
+        return arr.length > 0 ? arr : undefined;
       }
+
       if (typeof obj === "object") {
         const entries = Object.entries(obj).map(([k, v]) => [k, cleanObject(v)]);
         const filtered = entries.filter(([_, v]) => v !== undefined && v !== null);
-        if (!filtered.length) return undefined;
+
+        if (filtered.length === 0) return undefined;
         return Object.fromEntries(filtered);
       }
-      return obj; 
+
+      return obj;
     }
 
     function injectJsonLd(schema) {
-      if (!schema || typeof schema !== "object") return;
-      if (!schema["@type"] || schema["@type"] === null) return; 
+      if (!schema) return;
+
       const clean = cleanObject(schema);
-      if (!clean) return;
-      if (!clean["@type"]) return;
+
+      if (!clean || Object.keys(clean).length === 0) return;
+
+      const existingScript = document.getElementById("nobarin-jsonld");
+      if (existingScript) existingScript.remove();
+
       const script = document.createElement("script");
+      script.id = "nobarin-jsonld";
       script.type = "application/ld+json";
       script.textContent = JSON.stringify(clean);
       document.head.appendChild(script);
