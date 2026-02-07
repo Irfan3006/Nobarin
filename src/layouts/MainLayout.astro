@@ -2,7 +2,6 @@
 const { title, description, schema = null } = Astro.props;
 ---
 
-<!doctype html>
 <html lang="id" class="scroll-smooth">
   <head>
     <!-- Google tag (gtag.js) -->
@@ -28,7 +27,7 @@ const { title, description, schema = null } = Astro.props;
     <meta name="google-adsense-account" content="ca-pub-6092608473153556" />
 
     <!-- Json Schema SEO -->
-    <script type="application/ld+json" set:html={JSON.stringify(schema)} />
+    {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
     <!-- Card -->
     <meta property="og:type" content="website" />
