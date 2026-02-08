@@ -1,7 +1,7 @@
 // movieCache.ts
 const cache = new Map<string, { data: any; expiry: number }>();
 
-const DEFAULT_TTL = 10 * 60 * 1000; 
+const DEFAULT_TTL = 24 * 60 * 60 * 1000;  // 24 jam
 
 export async function fetchWithCache(url: string, ttl: number = DEFAULT_TTL) {
   const now = Date.now();
