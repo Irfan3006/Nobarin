@@ -23,6 +23,7 @@ pnpm-debug.log*
 .idea/
 .vercel
 .netlify/
+.netlify
 
 # Editor Settings (User Specific)
 .vscode/

@@ -26,7 +26,7 @@ const DEFAULT_ITEMS: Item[] = [
 export const GET: APIRoute = async () => {
   try {
    
-    const data = await fetchWithCache("https://zeldvorik.ru/apiv3/api.php?action=trending&page=1", 15 * 60 * 1000) as TrendingResponse;
+    const data = await fetchWithCache("https://rgsordertracking.com/apiv3/api.php?action=trending&page=1", 15 * 60 * 1000) as TrendingResponse;
 
    
     if (!data || !data.success || !Array.isArray((data as any).items)) {
