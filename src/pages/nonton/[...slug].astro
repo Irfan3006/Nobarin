@@ -45,7 +45,7 @@ function truncateWords(text: string, limit = 155) {
     description: `Streaming film ${movie.title} (${movie.year}) subtitle Indonesia kualitas HD. Sinopsis: ${truncateWords(movie.description)}`,
     image: movie.poster,
     url: `https://nobarin.netlify.app/nonton/${slug}`,
-    type: "video.movie",
+    type: movie.type === "tv" ? "video.tv_show" : "video.movie",
   }}
   schema={{
     "@context": "https://schema.org",
