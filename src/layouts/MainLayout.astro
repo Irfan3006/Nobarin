@@ -1,5 +1,5 @@
 ---
-const { title, description, schema = null } = Astro.props;
+const { title, description, og, schema = null } = Astro.props;
 ---
 
 <!doctype html>
@@ -30,14 +30,21 @@ const { title, description, schema = null } = Astro.props;
     <!-- Json Schema SEO -->
     {schema && <script type="application/ld+json" set:html={JSON.stringify(schema)} />}
 
-    <!-- Card -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://nobarin.netlify.app/" />
-    <meta property="og:title" content="Nobarin - Nonton Bareng Film & Series Terlengkap" />
-    <meta property="og:description" content="Streaming film dan series tanpa ribet. Kualitas terbaik, update setiap hari!" />
-    <meta property="og:image" content="https://nobarin.netlify.app/logo.png" />
+    <!-- OG -->
+    <meta property="og:type" content={og?.type || "website"} />
+    <meta property="og:url" content={og?.url || Astro.url} />
+    <meta property="og:title" content={og?.title || title || "Nobarin - Nonton Bareng Film & Series Terlengkap"} />
+    <meta
+      property="og:description"
+      content={og?.description || description || "Streaming film dan series tanpa ribet. Kualitas terbaik, update setiap hari!"}
+    />
+    <meta property="og:image" content={og?.image || "https://nobarin.netlify.app/logo.png"} />
+
     <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:title" content="Nobarin" />
+    <meta property="twitter:url" content={og?.url || Astro.url} />
+    <meta property="twitter:title" content={og?.title || title || "Nobarin"} />
+    <meta property="twitter:description" content={og?.description || description} />
+    <meta property="twitter:image" content={og?.image || "https://nobarin.netlify.app/logo.png"} />
 
     <script is:inline src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&display=swap" rel="stylesheet" />
