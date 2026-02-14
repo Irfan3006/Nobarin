@@ -8,7 +8,7 @@ let errorMsg = "";
 
 if (query) {
   try {
-    const url = `https://rgsordertracking.com/apiv3/api.php?action=search&q=${encodeURIComponent(query)}`;
+    const url = `https://zeldvorik.ru/apiv3/api.php?action=search&q=${encodeURIComponent(query)}`;
     
     const res = await fetch(url, {
         headers: { 'User-Agent': 'Mozilla/5.0' }
