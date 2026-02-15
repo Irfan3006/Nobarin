@@ -31,8 +31,9 @@ const DEFAULT_ITEMS: Item[] = [
 ];
 
 const API_ENDPOINTS = [
-  "https://rgsordertracking.com/apiv3/api.php?action=trending&page=1", // UTAMA
-  "https://zeldvorik.ru/apiv3/api.php?action=trending&page=1"          // BACKUP
+  "https://zeldvorik.ru/apiv3/api.php?action=trending&page=1",          
+
+  "https://rgsordertracking.com/apiv3/api.php?action=trending&page=1",
 ];
 
 // Batas waktu tunggu dalam milidetik (30 detik)

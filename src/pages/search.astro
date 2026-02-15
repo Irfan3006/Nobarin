@@ -1,25 +1,22 @@
 ---
-import MainLayout from '../layouts/MainLayout.astro';
+import MainLayout from "../layouts/MainLayout.astro";
 
-const query = Astro.url.searchParams.get('q');
+const query = Astro.url.searchParams.get("q");
 let searchResults = [];
 let errorMsg = "";
 
-const API_BASE_URLS = [
-  "https://rgsordertracking.com/apiv3", // UTAMA
-  "https://zeldvorik.ru/apiv3"          // BACKUP
-];
+const API_BASE_URLS = ["https://zeldvorik.ru/apiv3", "https://rgsordertracking.com/apiv3"];
 
 const TIMEOUT_MS = 30000;
 
 const fetchWithTimeout = async (url: string, options: RequestInit = {}) => {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), TIMEOUT_MS);
-  
+
   try {
     const response = await fetch(url, {
       ...options,
-      signal: controller.signal
+      signal: controller.signal,
     });
     clearTimeout(id);
     return response;
@@ -32,19 +29,17 @@ const fetchWithTimeout = async (url: string, options: RequestInit = {}) => {
 if (query) {
   let fetchSuccess = false;
 
- 
   for (const baseUrl of API_BASE_URLS) {
     try {
       const url = `${baseUrl}/api.php?action=search&q=${encodeURIComponent(query)}`;
       console.log(`[Search] Searching on: ${url}`);
 
       const res = await fetchWithTimeout(url, {
-        headers: { 'User-Agent': 'Mozilla/5.0' }
+        headers: { "User-Agent": "Mozilla/5.0" },
       });
 
       const data = await res.json();
-      
-     
+
       if (data && data.success && Array.isArray(data.items)) {
         searchResults = data.items;
         fetchSuccess = true;
@@ -53,80 +48,89 @@ if (query) {
       } else {
         console.warn(`[Search] No data/Invalid from ${baseUrl}, trying next...`);
       }
-
     } catch (e: unknown) {
       const msg = e instanceof Error ? e.message : String(e);
       console.error(`[Search] Error/Timeout on ${baseUrl}: ${msg}. Switching to backup...`);
-     
     }
   }
 
- 
   if (!fetchSuccess) {
     errorMsg = "Maaf, terjadi gangguan koneksi ke server. Silakan coba lagi nanti.";
   }
 }
 ---
 
-<MainLayout title={`Pencarian: ${query || 'Film'} - Nobarin`}>
+<MainLayout title={`Pencarian: ${query || "Film"} - Nobarin`}>
   <div class="container mx-auto px-6 py-24 min-h-screen">
-      
-      <div class="mb-8 border-b border-white/10 pb-4">
-        <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center">
-            <svg class="w-8 h-8 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-            Hasil Pencarian: <span class="text-purple-400 ml-2">"{query}"</span>
-        </h1>
-        <p class="text-gray-400 text-sm mt-2">
-            {errorMsg ? "Gagal memuat data." : `Ditemukan ${searchResults.length} hasil.`}
-        </p>
-      </div>
+    <div class="mb-8 border-b border-white/10 pb-4">
+      <h1 class="text-2xl md:text-3xl font-bold text-white flex items-center">
+        <svg class="w-8 h-8 mr-3 text-purple-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+          ><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg
+        >
+        Hasil Pencarian: <span class="text-purple-400 ml-2">"{query}"</span>
+      </h1>
+      <p class="text-gray-400 text-sm mt-2">
+        {errorMsg ? "Gagal memuat data." : `Ditemukan ${searchResults.length} hasil.`}
+      </p>
+    </div>
 
-      {errorMsg && (
+    {
+      errorMsg && (
         <div class="bg-red-500/10 border border-red-500 text-red-400 p-4 rounded-xl mb-6 flex items-center">
-             <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-             {errorMsg}
+          <svg class="w-6 h-6 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+          </svg>
+          {errorMsg}
         </div>
-      )}
+      )
+    }
 
-      {query ? (
-          searchResults.length > 0 ? (
-           
-            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
-                {searchResults.map((item:any) => (
-                    <a href={`/nonton/${item.detailPath}`} class="group relative bg-white/5 rounded-xl overflow-hidden cursor-pointer movie-card shadow-xl block hover:ring-2 hover:ring-purple-500 transition-all" data-aos="fade-up">
-                        <div class="aspect-[2/3] overflow-hidden">
-                            <img src={item.poster} alt={item.title} class="w-full h-full object-cover group-hover:scale-110 transition duration-500" loading="lazy" />
-                        </div>
-                        <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-80"></div>
-                        <div class="absolute bottom-0 p-4 w-full">
-                            <div class="flex items-center space-x-2 text-xs mb-1">
-                                <span class="bg-purple-600 px-2 py-0.5 rounded text-white">{item.rating || "N/A"} ⭐</span>
-                                <span class="text-gray-300">{item.year}</span>
-                            </div>
-                            <h3 class="font-semibold truncate text-white">{item.title}</h3>
-                            <p class="text-xs text-gray-400 capitalize">{item.type}</p>
-                        </div>
-                    </a>
-                ))}
-            </div>
-          ) : (
-           
-            !errorMsg && (
-                <div class="flex flex-col items-center justify-center py-20 text-center glass rounded-3xl border border-white/5">
-                    <div class="text-6xl mb-4">😔</div>
-                    <h3 class="text-2xl font-bold text-white mb-2">Tidak ditemukan</h3>
-                    <p class="text-gray-400">Maaf, kami tidak menemukan film dengan kata kunci "{query}".</p>
-                    <p class="text-gray-500 text-sm mt-2">Coba gunakan judul bahasa Inggris atau kata kunci lain.</p>
+    {
+      query ? (
+        searchResults.length > 0 ? (
+          <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-8">
+            {searchResults.map((item: any) => (
+              <a
+                href={`/nonton/${item.detailPath}`}
+                class="group relative bg-white/5 rounded-xl overflow-hidden cursor-pointer movie-card shadow-xl block hover:ring-2 hover:ring-purple-500 transition-all"
+                data-aos="fade-up"
+              >
+                <div class="aspect-[2/3] overflow-hidden">
+                  <img
+                    src={item.poster}
+                    alt={item.title}
+                    class="w-full h-full object-cover group-hover:scale-110 transition duration-500"
+                    loading="lazy"
+                  />
                 </div>
-            )
-          )
-      ) : (
-         
-          <div class="text-center py-20 glass rounded-3xl border border-white/5">
-              <div class="text-6xl mb-4">🔍</div>
-              <p class="text-gray-400 text-lg">Silakan ketik judul film di kolom pencarian di atas.</p>
+                <div class="absolute inset-0 bg-gradient-to-t from-dark via-transparent to-transparent opacity-80" />
+                <div class="absolute bottom-0 p-4 w-full">
+                  <div class="flex items-center space-x-2 text-xs mb-1">
+                    <span class="bg-purple-600 px-2 py-0.5 rounded text-white">{item.rating || "N/A"} ⭐</span>
+                    <span class="text-gray-300">{item.year}</span>
+                  </div>
+                  <h3 class="font-semibold truncate text-white">{item.title}</h3>
+                  <p class="text-xs text-gray-400 capitalize">{item.type}</p>
+                </div>
+              </a>
+            ))}
           </div>
-      )}
-
+        ) : (
+          !errorMsg && (
+            <div class="flex flex-col items-center justify-center py-20 text-center glass rounded-3xl border border-white/5">
+              <div class="text-6xl mb-4">😔</div>
+              <h3 class="text-2xl font-bold text-white mb-2">Tidak ditemukan</h3>
+              <p class="text-gray-400">Maaf, kami tidak menemukan film dengan kata kunci "{query}".</p>
+              <p class="text-gray-500 text-sm mt-2">Coba gunakan judul bahasa Inggris atau kata kunci lain.</p>
+            </div>
+          )
+        )
+      ) : (
+        <div class="text-center py-20 glass rounded-3xl border border-white/5">
+          <div class="text-6xl mb-4">🔍</div>
+          <p class="text-gray-400 text-lg">Silakan ketik judul film di kolom pencarian di atas.</p>
+        </div>
+      )
+    }
   </div>
 </MainLayout>
