@@ -110,7 +110,13 @@ import MainLayout from "../layouts/MainLayout.astro";
   </div>
 
   <script is:inline>
-    const API_BASE = "https://rgsordertracking.com/apiv3/api.php";
+    const API_ENDPOINTS = [
+      "https://rgsordertracking.com/apiv3/api.php", // UTAMA
+      "https://zeldvorik.ru/apiv3/api.php", // BACKUP
+    ];
+
+    const TIMEOUT_MS = 30000; 
+
     let currentCategory = "trending";
     let currentPage = 1;
 
@@ -118,6 +124,26 @@ import MainLayout from "../layouts/MainLayout.astro";
       renderResumeSection();
       initializePageData();
     });
+
+    
+    async function fetchWithTimeout(resource, options = {}) {
+      const { timeout = TIMEOUT_MS } = options;
+
+      const controller = new AbortController();
+      const id = setTimeout(() => controller.abort(), timeout);
+
+      try {
+        const response = await fetch(resource, {
+          ...options,
+          signal: controller.signal,
+        });
+        clearTimeout(id);
+        return response;
+      } catch (error) {
+        clearTimeout(id);
+        throw error;
+      }
+    }
 
     async function initializePageData() {
       try {
@@ -145,7 +171,7 @@ import MainLayout from "../layouts/MainLayout.astro";
                   url: m.detailPath ? `${window.location.origin}/nonton/${m.detailPath}` : undefined,
                   image: m.poster,
                   datePublished: m.year ? String(m.year) : undefined,
-                  description: m.description ? m.description.substring(0, 150) + "..." : undefined, // Batasi panjang deskripsi
+                  description: m.description ? m.description.substring(0, 150) + "..." : undefined, 
                 }))
                 .filter((m) => m.name && m.url),
             };
@@ -276,27 +302,49 @@ import MainLayout from "../layouts/MainLayout.astro";
       document.getElementById("movieGrid").scrollIntoView({ behavior: "smooth" });
     }
 
-    async function loadContent() {
+async function loadContent() {
       const grid = document.getElementById("movieGrid");
       grid.innerHTML = Array(10).fill('<div class="rounded-xl overflow-hidden aspect-[2/3] animate-pulse bg-white/10"></div>').join("");
+      
+      let success = false;
+      let lastError = "";
 
-      try {
-        const url = `${API_BASE}?action=${currentCategory}&page=${currentPage}`;
-        const res = await fetch(url);
-        const data = await res.json();
+      
+      for (const baseUrl of API_ENDPOINTS) {
+          try {
+              const url = `${baseUrl}?action=${currentCategory}&page=${currentPage}`;
+              console.log(`Fetching: ${url}`);
 
-        if (data.success) {
-          renderGrid(data.items);
-          const prevBtn = document.getElementById("prevBtn");
-          if (currentPage > 1) {
-            prevBtn.classList.remove("opacity-50", "cursor-not-allowed");
-          } else {
-            prevBtn.classList.add("opacity-50", "cursor-not-allowed");
+              
+              const res = await fetchWithTimeout(url, { timeout: TIMEOUT_MS });
+              const data = await res.json();
+
+              if (data.success) {
+                  renderGrid(data.items);
+                  
+                  
+                  const prevBtn = document.getElementById("prevBtn");
+                  if (currentPage > 1) {
+                      prevBtn.classList.remove("opacity-50", "cursor-not-allowed");
+                  } else {
+                      prevBtn.classList.add("opacity-50", "cursor-not-allowed");
+                  }
+
+                  success = true;
+                  break; 
+              } else {
+                 console.warn(`Data invalid dari ${baseUrl}, mencoba backup...`);
+              }
+          } catch (e) {
+              console.warn(`Gagal fetch ${baseUrl}: ${e.message}. Switch ke backup...`);
+              lastError = e.message;
           }
-        }
-      } catch (e) {
-        console.error(e);
-        grid.innerHTML = '<p class="text-center col-span-full">Gagal memuat data.</p>';
+      }
+
+      
+      if (!success) {
+          console.error("Semua endpoint gagal.");
+          grid.innerHTML = '<p class="text-center col-span-full text-red-400">Gagal memuat data. Silakan coba lagi nanti.</p>';
       }
     }
 

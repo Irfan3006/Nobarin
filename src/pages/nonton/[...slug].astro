@@ -6,28 +6,61 @@ const { slug } = Astro.params;
 
 let movie = null;
 let episodes = [];
+let fetchSuccess = false;
 
-try {
-  const targetUrl = `https://rgsordertracking.com/apiv3/api.php?action=detail&detailPath=${slug}`;
-  const data = await fetchWithCache(targetUrl, 60 * 60 * 1000);
+const API_BASE_URLS = [
+  "https://rgsordertracking.com/apiv3", // UTAMA
+  "https://zeldvorik.ru/apiv3", // BACKUP
+];
 
-  if (data && data.success) {
-    movie = data.data;
-    if (movie.seasons) {
-      episodes = movie.seasons;
+const TIMEOUT_MS = 30000;
+
+const fetchWithTimeout = (promise: Promise<any>, ms: number) => {
+  let timeoutId: NodeJS.Timeout;
+
+  const timeoutPromise = new Promise((_, reject) => {
+    timeoutId = setTimeout(() => {
+      reject(new Error(`Request timed out after ${ms}ms`));
+    }, ms);
+  });
+
+  return Promise.race([promise, timeoutPromise]).then((res) => {
+    clearTimeout(timeoutId!);
+    return res;
+  });
+};
+
+for (const baseUrl of API_BASE_URLS) {
+  try {
+    const targetUrl = `${baseUrl}/api.php?action=detail&detailPath=${slug}`;
+    console.log(`[Detail] Fetching: ${targetUrl} (Timeout: 30s)`);
+
+    const data = await fetchWithTimeout(fetchWithCache(targetUrl, 60 * 60 * 1000), TIMEOUT_MS);
+
+    if (data && data.success && data.data) {
+      movie = data.data;
+
+      if (movie.seasons) {
+        episodes = movie.seasons;
+      } else {
+        const raw = movie.episodes || movie.list_episode || movie.episode || [];
+        episodes = Array.isArray(raw) ? raw : Object.values(raw);
+      }
+
+      console.log(`[Detail] Success fetching from ${baseUrl}`);
+      fetchSuccess = true;
+      break;
     } else {
-      const raw = movie.episodes || movie.list_episode || movie.episode || [];
-      episodes = Array.isArray(raw) ? raw : Object.values(raw);
+      console.warn(`[Detail] Invalid data from ${baseUrl}, trying next...`);
     }
-  } else {
-    return Astro.redirect("/404");
+  } catch (e: unknown) {
+    const msg = e instanceof Error ? e.message : String(e);
+    console.warn(`[Detail] Error/Timeout on ${baseUrl}: ${msg}. Switching to backup...`);
   }
-} catch (e: unknown) {
-  console.error("Error Detail Page:", e instanceof Error ? e.message : String(e));
-  return Astro.redirect("/404");
 }
 
-if (!movie) {
+if (!fetchSuccess || !movie) {
+  console.error("[Detail] All endpoints failed for slug:", slug);
   return Astro.redirect("/404");
 }
 
